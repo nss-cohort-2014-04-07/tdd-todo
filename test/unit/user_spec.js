@@ -25,8 +25,9 @@ describe('User', function(){
 
   beforeEach(function(done){
     console.log('BEFORE EACH');
-    //global.nss.db.collection('users').drop(done);
-    done();
+    global.nss.db.collection('users').drop(function(){
+      done();
+    });
   });
 
   describe('.register', function(){
