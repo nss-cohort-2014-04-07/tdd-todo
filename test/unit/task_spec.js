@@ -12,6 +12,8 @@ var request = require('supertest');
 var traceur = require('traceur');
 var moment = require('moment');
 
+console.log('x');
+
 var User;
 var Task;
 var sue;
