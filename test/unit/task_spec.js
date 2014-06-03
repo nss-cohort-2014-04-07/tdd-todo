@@ -15,7 +15,8 @@ var moment = require('moment');
 var User;
 var Task;
 var sue;
-var task;
+var bob;
+var task1, task2, task3;
 
 describe('Task', function(){
   before(function(done){
@@ -31,11 +32,20 @@ describe('Task', function(){
   beforeEach(function(done){
     global.nss.db.collection('users').drop(function(){
       global.nss.db.collection('tasks').drop(function(){
-        User.register({email:'sue@aol.com', password:'abcd'}, function(u){
-          Task.create(u._id, {title:'homework', due:'7/17/2014', color:'orange'}, function(t){
-            sue = u;
-            task = t;
-            done();
+        User.register({email:'sue@aol.com', password:'abcd'}, function(s){
+          User.register({email:'bob@aol.com', password:'1234'}, function(b){
+            Task.create(s._id, {title:'javascript', due:'7/17/2014', color:'yellow'}, function(t1){
+              Task.create(s._id, {title:'swift', due:'7/18/2014', color:'orange'}, function(t2){
+                Task.create(b._id, {title:'node', due:'7/19/2014', color:'green'}, function(t3){
+                  sue = s;
+                  bob = b;
+                  task1 = t1;
+                  task2 = t2;
+                  task3 = t3;
+                  done();
+                });
+              });
+            });
           });
         });
       });
@@ -69,9 +79,9 @@ describe('Task', function(){
 
   describe('.findById', function(){
     it('should find a task by its id', function(done){
-      Task.findById(task._id.toString(), function(t){
+      Task.findById(task1._id.toString(), function(t){
         expect(t).to.be.instanceof(Task);
-        expect(t._id).to.deep.equal(task._id);
+        expect(t._id).to.deep.equal(task1._id);
         done();
       });
     });
@@ -86,6 +96,29 @@ describe('Task', function(){
     it('should NOT find a task - WRONG ID', function(done){
       Task.findById('538dfb6e5cc8b9f1069585b2', function(t){
         expect(t).to.be.null;
+        done();
+      });
+    });
+  });
+
+  describe('.findByUserId', function(){
+    it('should find all tasks by userId', function(done){
+      Task.findByUserId(sue._id.toString(), function(tasks){
+        expect(tasks).to.have.length(2);
+        done();
+      });
+    });
+
+    it('should NOT find any tasks - bad userId', function(done){
+      Task.findByUserId('not an id', function(tasks){
+        expect(tasks).to.be.null;
+        done();
+      });
+    });
+
+    it('should NOT find any tasks - wrong userId', function(done){
+      Task.findByUserId('538dfb6e5cc8b9f1069585b2', function(tasks){
+        expect(tasks).to.have.length(0);
         done();
       });
     });

@@ -29,6 +29,13 @@ class Task{
       }
     });
   }
+
+  static findByUserId(userId, fn){
+    if(userId.length !== 24){fn(null); return;}
+
+    userId = Mongo.ObjectID(userId);
+    taskCollection.find({userId:userId}).toArray((e,ts)=>fn(ts));
+  }
 }
 
 module.exports = Task;
