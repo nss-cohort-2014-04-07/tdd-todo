@@ -36,6 +36,18 @@ class Task{
     userId = Mongo.ObjectID(userId);
     taskCollection.find({userId:userId}).toArray((e,ts)=>fn(ts));
   }
+
+  destroy(fn){
+    taskCollection.findAndRemove({_id:this._id}, ()=>fn());
+  }
+
+  toggle(){
+    this.isComplete = !this.isComplete;
+  }
+
+  save(fn){
+    taskCollection.save(this, ()=>fn());
+  }
 }
 
 module.exports = Task;

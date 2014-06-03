@@ -12,8 +12,6 @@ var request = require('supertest');
 var traceur = require('traceur');
 var moment = require('moment');
 
-console.log('x');
-
 var User;
 var Task;
 var sue;
@@ -122,6 +120,36 @@ describe('Task', function(){
       Task.findByUserId('538dfb6e5cc8b9f1069585b2', function(tasks){
         expect(tasks).to.have.length(0);
         done();
+      });
+    });
+  });
+
+  describe('#destroy', function(){
+    it('should delete a task', function(done){
+      task1.destroy(function(){
+        Task.findByUserId(sue._id.toString(), function(tasks){
+          expect(tasks).to.have.length(1);
+          done();
+        });
+      });
+    });
+  });
+
+  describe('#toggle', function(){
+    it('should toggle a task', function(){
+      task1.toggle();
+      expect(task1.isComplete).to.be.true;
+    });
+  });
+
+  describe('#save', function(){
+    it('should save a task', function(done){
+      task1.toggle();
+      task1.save(function(){
+        Task.findById(task1._id.toString(), function(foundTask){
+          expect(foundTask.isComplete).to.be.true;
+          done();
+        });
       });
     });
   });
